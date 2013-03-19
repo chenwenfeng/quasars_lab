@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      video {
+        width: 200px;
+        height: 170px;
+        margin: 5px;
+        -webkit-transform: rotateY(180deg);
+      }
+      input {
+        width: 200px;
+        height: 30px;
+        border: 1px solid #71A1D3;
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2 style="height: 50px;margin:0;padding:0;line-height: 50px;border-bottom: 2px solid #999;">WebRTC Chat Room</h2>
+    <div id="login" style="width:1024px;margin:auto;text-align: center;padding: 30px 0;">
+      <div>
+        room:<input type="text" id="room-name" value="test">
+      </div>
+      <div>
+        name:<input type="text" id="userid" value="guest">
+      </div>
+      <button onclick="login()" style="margin-top: 20px;width: 150px;height: 35px;border: none;background:#71A1D3;color:#FFF;border-radius:2px;" id="join">join</button>
+    </div>
+    <div id="room-panel" style="margin:0 auto;width: 980px;display:none;">
+      <div style="position: fixed;top:60px;;left:0;border: 1px solid #666;width: 150px;min-height: 200px;">
+        <h4>user list</h4>
+        <div id="room-list" style="border-top: 2px dotted #999;"></div>
+      </div>
+
+      <div id="container" style="border: 1px solid #AAA;">
+      </div>
+
+      <div id="control" style="position:fixed;right:0;top:60px;">
+        <video id="self" autoplay></video>
+        <div>
+          <button onclick="roomApp.close();" id="hangup">Hang Up</button>
+          <button onclick="roomApp.reEntry();" disabled id="reentry">ReEntry</button>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="js/jquery-1.9.0.min.js" ></script>
+    <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
+    <script type="text/javascript" src="js/adapter.js" ></script>
+    <script type="text/javascript" src="js/RoomModel.js" ></script>
+    <script type="text/javascript" src="js/RoomApp.js" ></script>
+    <script type="text/javascript" src="js/Caller.js" ></script>
+    <script type="text/javascript" src="js/Callee.js" ></script>
+
+    <script type="text/javascript">
+      var room;
+      var userid;
+      var baseRef;
+      var roomModel;
+      var roomApp;
+      function login() {
+        room = $('#room-name')[0].value;
+        userid = $('#userid')[0].value;
+        if(room && userid) {
+          $('#login').hide();
+          $('#room-panel').show();
+          join();
+        }
+      }
+      function join() {
+        baseRef = new Firebase('https://livemeeting.firebaseio.com/webRTC');
+        roomModel = new RoomModel(baseRef, room, userid);
+        roomApp = new RoomApp(userid, roomModel, $('#self')[0], $('#container')[0], $('#room-list')[0]);
+      }
+    </script>
+  </body>
+</html>
